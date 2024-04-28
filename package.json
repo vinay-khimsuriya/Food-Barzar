@@ -1,0 +1,40 @@
+{
+  "name": "food-bazar",
+  "version": "1.0.0",
+  "description": "Palce order in second and get in few time",
+  "main": "App.js",
+  "scripts": {
+    "start": "npx parcel index.html",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinay-khimsuriya/Food-Barzar.git"
+  },
+  "keywords": [
+    "Food",
+    "Bazar",
+    "Delisious",
+    "Chizy",
+    "Fast",
+    "Food",
+    "2",
+    "minute"
+  ],
+  "author": "Vinay Khimsuriya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vinay-khimsuriya/Food-Barzar/issues"
+  },
+  "homepage": "https://github.com/vinay-khimsuriya/Food-Barzar#readme",
+  "dependencies": {
+    "d": "^1.0.2",
+    "parcel": "^2.12.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-multi-carousel": "^2.8.4"
+  },
+  "devDependencies": {
+    "process": "^0.11.10"
+  }
+}
