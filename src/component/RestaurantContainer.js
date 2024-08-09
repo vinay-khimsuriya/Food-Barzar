@@ -1,69 +1,129 @@
-import React, { useEffect, useState } from "react";
-import resDataList from '../utils/ResDataList'
-import RestarantCard from "../reusebleComponent/RestarantCard";
-import data from "../utils/ResDataList";
+import React, { useContext, useEffect, useState } from "react";
+import resDataList from "../utils/ResDataList";
+import RestarantCard, {
+  withPromtedLabel,
+} from "../reusebleComponent/RestarantCard";
 import Shimmer from "./Shimmer";
+import { Link } from "react-router-dom";
+import UserContex from "../utils/UserContext";
 
-function RestaurantContainer(){
-    const [resList,setResList]=useState([]);
-    const [filteredResList,setFilteredResList]=useState([]);
-    const myData=resDataList;
-    const [searchT,setSearchT]=useState("");
-    const [loading, setLoading] = useState(true); // New loading state
+function RestaurantContainer() {
+  const [resList, setResList] = useState([]);
+  const [filteredResList, setFilteredResList] = useState([]);
+  const myData = resDataList;
+  const [searchT, setSearchT] = useState("");
+  const [loading, setLoading] = useState(true); // New loading state
+  const [onlineStatuse, setOnlineStates] = useState(true);
+  const RestaurentCardWithLabel = withPromtedLabel(RestarantCard);
 
-    // console.log(resdataList);
+  const { loggedInUser, setUserName } = useContext(UserContex);
 
-    useEffect(()=>{
+  useEffect(() => {
     fetchData();
-    },[]);
+    window.addEventListener("online", () => {
+      setOnlineStates(true);
+    });
+    window.addEventListener("offline", () => {
+      setOnlineStates(false);
+    });
 
-    useEffect(() => {
-        // console.log(resList);
-    }, [resList]);
+    // return () => {
+    //   window.removeEventListener("online");
+    //   window.removeEventListener("offline");
+    // };
+  }, []);
 
-    const fetchData = async () => {
-        try {
-            const response = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=23.02760&lng=72.58710&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING");
-            const json = await response.json();
-            // Now you can use the 'data' variable for further processing
-            setResList(json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
-            setFilteredResList(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
-            console.log(filteredResList);
-            setLoading(false);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=23.02760&lng=72.58710&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+      );
+      const json = await response.json();
+      setResList(
+        json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants
+      );
+      setFilteredResList(
+        json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants
+      );
+      console.log(filteredResList);
 
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-    if(loading){
-        return <Shimmer/>;
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-    return(
-        <div className="res-container container d-flex flex-column">        
-           <div className="d-flex ps-1 ">
-            <input className="me-1 rounded-pill" type="text" value={searchT} onChange={(e)=>{
-                setSearchT(e.target.value);
-            }}></input>
-            <button className="btn btn-primary" type="button" onClick={()=>
-            {
-                const fdata=resList.filter((res)=>res.info.name.toLowerCase().includes(searchT.toLocaleLowerCase()));
+  };
+  if (onlineStatuse === false) {
+    return <div>You are offline</div>;
+  } else if (loading) {
+    return <Shimmer />;
+  }
+  return (
+    <div className="res-container container d-flex flex-column">
+      <div className="d-flex ps-1 ">
+        <input
+          className="me-1 rounded-pill"
+          type="text"
+          value={searchT}
+          onChange={(e) => {
+            setSearchT(e.target.value);
+          }}
+        ></input>
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={() => {
+            const fdata = resList.filter((res) =>
+              res.info.name.toLowerCase().includes(searchT.toLocaleLowerCase())
+            );
 
-                if (fdata.length === 0) {
-                    alert('No matching restaurants found.');
-                } else {
-                    setFilteredResList(fdata);
-                }
+            if (fdata.length === 0) {
+              alert("No matching restaurants found.");
+            } else {
+              setFilteredResList(fdata);
+            }
+          }}
+        >
+          Search
+        </button>
+      </div>
 
-            }}>Search</button>
-           </div>
+      <div>
+        <input
+          className="rounded-pill"
+          value={loggedInUser}
+          onChange={(e) => {
+            setUserName(e.target.value);
+          }}
+        />
+      </div>
 
-        <div className="d-flex flex-wrap justify-content-between">
-            {filteredResList.map((restaurant)=> <RestarantCard key={restaurant.info.id} resDataList={restaurant}/> )}
+      <div className="d-flex flex-wrap justify-content-between">
+        {filteredResList && filteredResList.length > 0 ? (
+          filteredResList.map((restaurant, index) => (
+            <Link
+              className="card-link"
+              to={"restaurants/" + restaurant.info.id}
+            >
+              {restaurant.info.id % 2 === 0 ? (
+                <RestarantCard
+                  key={restaurant.info.id}
+                  resDataList={restaurant}
+                />
+              ) : (
+                <RestaurentCardWithLabel resDataList={restaurant} />
+              )}
+            </Link>
+          ))
+        ) : (
+          <div>No data found</div>
+        )}
 
-            {/* {resDataList.map(res=> <RestarantCard resListObject={res} />)} */}
-            {/* <RestarantCard resDataList={myData[0]}></RestarantCard> */}
-        </div>
+        {/* {resDataList.map(res=> <RestarantCard resListObject={res} />)} */}
+        {/* <RestarantCard resDataList={myData[0]}></RestarantCard> */}
+      </div>
     </div>
-    );
+  );
 }
-export default RestaurantContainer
+export default RestaurantContainer;

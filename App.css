@@ -18,6 +18,7 @@ body{
 .navbar{
     position: sticky;
     top: 0;
+    z-index: 10;
     background: rgba(0,0,0,.5);
 }
 .barnd-container{
@@ -41,8 +42,14 @@ body{
     border-radius: 20px;
     background: rgba(0,0,0,0.3);
 }
-.card-container{
+.card-link{
     width: 32%;
+    text-decoration: none;
+    color: white;
+
+}
+.card-container{
+    width: 100%;
     border-radius: 10px;
     margin: 5px;
     padding: 0;
@@ -84,8 +91,11 @@ body{
     .res-container{
         width: 100%;
     }
-    .card-container{
+    .card-link{
         width: 48%;
+    }
+    .card-container{
+        width: 100%;
         border-radius: 10px;
         margin: 5px;
         padding: 0;
@@ -97,8 +107,11 @@ body{
         justify-content: center;
         width: 100%;
     }
-    .card-container{
+    .card-link{
         width: 80%;
+    }
+    .card-container{
+        width: 100%;
         border-radius: 10px;
         margin: 5px auto;
         padding: 0;

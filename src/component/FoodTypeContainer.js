@@ -1,24 +1,37 @@
 import React from 'react'
 import FoodTypeCard from '../reusebleComponent/FoodTypeCard'
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import FoodTypeData from '../utils/FoodTypeData'
 
 export default function FoodTypeContainer() {
-    const [foodCardData, setFoodCardData]=useState(FoodTypeData);
-    let foodC=document.querySelector('.food-container');
+    const [foodCardData, setFoodCardData]=useState(FoodTypeData || []);
+    const foodContainerRef = useRef(null);
     
     const btnPrevious=() =>{
         let width=200; 
-        foodC.scrollLeft= foodC.scrollLeft - width;
-        console.log(width);    
+        if (foodContainerRef.current) {
+            foodContainerRef.current.scrollLeft = foodContainerRef.current.scrollLeft - width;
+        }
+        console.log(`Scrolled left by ${width}px`);
+            console.log(`Current scroll position: ${foodContainerRef.current.scrollLeft}`);
+           
     }
     
     const btnNext=() =>{
         let width=200; 
-        // let width=foodC.clientWidth; 
-        foodC.scrollLeft= foodC.scrollLeft + width;
-      
+        if (foodContainerRef.current) {
+            foodContainerRef.current.scrollLeft = foodContainerRef.current.scrollLeft + width;
+            console.log(`Scrolled right by ${width}px`);
+            console.log(`Current scroll position: ${foodContainerRef.current.scrollLeft}`);
+        
+        }
     }
+
+    useEffect(() => {
+        if (!foodContainerRef.current) {
+            console.error('Food container reference is not set');
+        }
+    }, []);
   
   return ( 
     <div className='container my-2'>
